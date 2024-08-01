@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
+	<LangVersion>latest</LangVersion>
+	<Nullable>enable</Nullable>
+	<!--<Features>InterceptorPreview</Features>
+	<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NYaul.Internals</InterceptorsPreviewNamespaces>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polyfill" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <!--<PackageReference Include="PolySharp" Version="1.14.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>-->
+  </ItemGroup>
+
+</Project>
