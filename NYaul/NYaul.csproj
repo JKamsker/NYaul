@@ -1,22 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net48;netstandard2.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<!-- Basic metadata -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>NYaul</PackageId>
+		<Version>0.0.2</Version>
+		<Authors>Jonas Kamsker</Authors>
+		<Company>JKamsker</Company>
+		<Product>NYaul</Product>
+		<Description>Dies das :)</Description>
+		<PackageTags>utility libraray</PackageTags>
+		<RepositoryUrl>https://github.com/JKamsker/NYaul</RepositoryUrl>
 
-  <PropertyGroup>
-    <TargetFrameworks>net48;net8.0</TargetFrameworks>
-	<LangVersion>latest</LangVersion>
-	<Nullable>enable</Nullable>
-	<!--<Features>InterceptorPreview</Features>
-	<InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NYaul.Internals</InterceptorsPreviewNamespaces>-->
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Polyfill" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <!--<PackageReference Include="PolySharp" Version="1.14.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>-->
-  </ItemGroup>
-
+		<!-- Optional additional metadata -->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/JKamsker/NYaul</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<Copyright>Jonas Kamsker © 2024</Copyright>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'  Or '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="PolySharp" Version="1.15.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 </Project>

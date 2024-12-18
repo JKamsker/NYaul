@@ -15,5 +15,6 @@ public class ActionDisposableTest
         }
         
         state.Should().BeTrue();
+        
     }
 }

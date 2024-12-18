@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace NYaul.Extensions;
 
-internal static class ReflectionExtensions
+public static class ReflectionExtensions
 {
     /// <inheritdoc cref="GenericTypeHelper.GetGenericArgumentsOfTypeDefinition(Type, Type)"/>
     public static IEnumerable<GenericArgumentResult> GetGenericArgumentsOfTypeDefinition(
