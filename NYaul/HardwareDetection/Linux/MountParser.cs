@@ -1,6 +1,5 @@
-﻿namespace Apro.AutoUpdater.Lib.IO.HardwareDetection.Linux;
-
-using Apro.AutoUpdater.Lib.IO.FileProvider;
+﻿namespace NYaul.HardwareDetection.Linux;
+using NYaul.IO.FileProvider;
 
 using System;
 using System.Collections.Generic;

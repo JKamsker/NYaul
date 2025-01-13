@@ -57,7 +57,8 @@ public class ActionDisposable : IDisposable
 
         public static IDisposable Create(T start, T end, Action<T> action)
         {
-            return new ActionDisposable<T>(start, end, action);
+            action(start);
+            return new GenericActionDisposable<T>(end, action);
         }
     }
 }

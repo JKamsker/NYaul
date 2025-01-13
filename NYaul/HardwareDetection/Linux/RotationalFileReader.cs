@@ -1,6 +1,6 @@
-﻿using Apro.AutoUpdater.Lib.IO.FileProvider;
+﻿using NYaul.IO.FileProvider;
 
-namespace Apro.AutoUpdater.Lib.IO.HardwareDetection.Linux;
+namespace NYaul.HardwareDetection.Linux;
 
 public class RotationalFileReader
 {

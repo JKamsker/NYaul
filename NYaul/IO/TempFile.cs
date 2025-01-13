@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using NYaul.Extensions;
 using NYaul.Internals;
 
 namespace NYaul.IO;
@@ -36,9 +36,15 @@ public class TempFile : IDisposable
     /// </summary>
     /// <param name="extension"></param>
     /// <returns></returns>
+    public static TempFile CreateWithExtension(FileExtension extension)
+        => CreateWithExtension(extension.Extension);
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static TempFile CreateWithExtension(string extension)
     {
         var tempDirectory = Path.GetTempPath();
+        var startsWithDot = extension.StartsWith('.');
+
         while (true)
         {
             var randomName = RandomPolyfill.Shared.NextString(10);
@@ -46,7 +52,7 @@ public class TempFile : IDisposable
             sb.Append(tempDirectory);
             sb.Append(randomName);
 
-            if (extension.StartsWith("."))
+            if (startsWithDot)
             {
                 sb.Append(extension);
             }

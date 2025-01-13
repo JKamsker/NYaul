@@ -3,7 +3,7 @@ using System.Text;
 
 //using Random = NYaul.Internals.RandomEx;
 
-namespace NYaul.Extensions;
+namespace System;
 
 public static class RandomExtensions
 {

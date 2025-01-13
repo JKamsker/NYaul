@@ -1,8 +1,7 @@
-﻿using NYaul.Extensions;
-
+﻿
 using System.IO;
 
-namespace Apro.AutoUpdater.Lib.IO.FileProvider;
+namespace NYaul.IO.FileProvider;
 
 public class DefaultFileProvider : IFileProvider
 {

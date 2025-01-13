@@ -1,6 +1,4 @@
-﻿using Apro.AutoUpdater.Lib.IO.FileProvider;
-
-using NYaul.Extensions;
+﻿using NYaul.IO.FileProvider;
 
 using System.Collections.Generic;
 using System.Diagnostics;

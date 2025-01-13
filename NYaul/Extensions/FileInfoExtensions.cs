@@ -5,12 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using System.Linq;
+using NYaul.Internals;
 
 #if NET5_0_OR_GREATER
 using System.Text.Json;
 #endif
 
-namespace NYaul.Extensions;
+namespace System.IO;
 
 public static class FileInfoExtensions
 {

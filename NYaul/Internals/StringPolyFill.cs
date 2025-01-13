@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NYaul;
-internal static class StringExtensions
+namespace NYaul.Internals;
+internal static class StringPolyfill
 {
     /// <summary>
     /// Gets a substring between two strings. The first on is at the start and the second one is at the end.
@@ -36,20 +37,21 @@ internal static class StringExtensions
         return source.IndexOf(value, comparisonType) >= 0;
     }
 
-    // EndsWith and StartsWith 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EndsWith(this string source, char value)
     {
         return source[^1] == value;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool StartsWith(this string source, char value)
     {
         return source[0] == value;
     }
 
 
-  
-    public static string Join(this string[] values, char separator)
+
+    public static string Join(char separator, string[] values)
     {
         if (values == null)
         {
@@ -70,8 +72,38 @@ internal static class StringExtensions
         return result.ToString();
     }
 
+    public static string Join(char separator, IEnumerable<string> values)
+    {
+        if (values == null)
+        {
+            throw new ArgumentNullException(nameof(values));
+        }
+
+        var result = new StringBuilder();
+        using (var enumerator = values.GetEnumerator())
+        {
+            if (enumerator.MoveNext())
+            {
+                result.Append(enumerator.Current);
+                while (enumerator.MoveNext())
+                {
+                    result.Append(separator);
+                    result.Append(enumerator.Current);
+                }
+            }
+        }
+
+        return result.ToString();
+    }
+    
+
 #else
-    public static string Join(this string[] values, char separator)
+    public static string Join(char separator, string[] values)
+    {
+        return string.Join(separator, values);
+    }
+    
+    public static string Join(char separator, IEnumerable<string> values)
     {
         return string.Join(separator, values);
     }

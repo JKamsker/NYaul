@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using NYaul.Extensions;
-
-namespace Apro.AutoUpdater.Lib.IO;
+namespace NYaul.IO;
 
 public static class DirectoryEx
 {
@@ -75,7 +73,7 @@ public static class DirectoryEx
             }
             else if (file is DirectoryInfo subDir)
             {
-                CopyImpl(subDir, tempPath, filter);
+                subDir.CopyImpl(tempPath, filter);
             }
         }
     }
@@ -219,7 +217,7 @@ public class DirectoryCopyBuilder : IDirectoryFromBuilder, IDirectoryToBuilder, 
             };
         }
 
-        DirectoryEx.CopyImpl(sourceDirInfo, _destinationPath, filter);
+        sourceDirInfo.CopyImpl(_destinationPath, filter);
     }
 
     public IDirectoryToBuilder From(DirectoryInfo sourcePath)

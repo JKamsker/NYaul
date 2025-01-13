@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Apro.AutoUpdater.Lib.IO.FileProvider;
+namespace NYaul.IO.FileProvider;
 
 public interface IFileProvider
 {

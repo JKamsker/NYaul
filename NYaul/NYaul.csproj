@@ -9,7 +9,7 @@
 		<!-- Basic metadata -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>NYaul</PackageId>
-		<Version>0.0.2</Version>
+		<Version>0.0.5</Version>
 		<Authors>Jonas Kamsker</Authors>
 		<Company>JKamsker</Company>
 		<Product>NYaul</Product>

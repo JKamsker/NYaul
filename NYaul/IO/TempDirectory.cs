@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 
-using NYaul.Extensions;
 using NYaul.Internals;
 
 //using Random = NYaul.Internals.RandomEx;

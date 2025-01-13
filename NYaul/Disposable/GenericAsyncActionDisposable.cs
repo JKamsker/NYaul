@@ -36,7 +36,7 @@ public class AsyncActionDisposable : IAsyncDisposable
         return new GenericAsyncActionDisposable<T>(start, end, action);
     }
 
-    internal class GenericAsyncActionDisposable<T> : IAsyncDisposable
+    private class GenericAsyncActionDisposable<T> : IAsyncDisposable
     {
         private readonly Func<T, Task> _action;
         private readonly T _end;

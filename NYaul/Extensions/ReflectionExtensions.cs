@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace NYaul.Extensions;
+namespace System.Reflection;
 
 public static class ReflectionExtensions
 {
