@@ -56,8 +56,12 @@ jobs:
         msbuild NYaul.sln /p:Configuration=Release /p:Platform="Any CPU" /restore
         msbuild NYaul.Tests\NYaul.Tests.csproj /p:Configuration=Release /p:Platform="Any CPU" /t:Build /p:TargetFramework=net481
 
+    - name: Create TestResults Directory
+      run: mkdir TestResults -Force
+
     - name: Test .NET Framework
-      run: vstest.console.exe NYaul.Tests\bin\Release\net481\NYaul.Tests.dll /Logger:trx\;LogFileName=TestResults\net481-test-results.trx
+      run: |
+        vstest.console.exe NYaul.Tests\bin\Release\net481\NYaul.Tests.dll /Logger:"trx;LogFileName=TestResults/net481-test-results.trx"
 
     - name: Test .NET Core
       run: dotnet test --no-build --configuration Release --framework net8.0 --logger "trx;LogFileName=TestResults/net8-test-results.trx" --results-directory TestResults
