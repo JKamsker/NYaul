@@ -5,17 +5,8 @@ on:
     branches: [ "*" ]
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            framework: net8.0
-          - os: windows-latest
-            framework: all
-    runs-on: ${{ matrix.os }}
-
+  linux-build:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     
@@ -24,32 +15,49 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Setup .NET Framework (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: |
-          8.0.x
-          4.8.1
-
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --no-restore
-      
-    - name: Test (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: dotnet test --no-build --verbosity normal --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
-      
-    - name: Test (Windows)
-      if: matrix.os == 'windows-latest'
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
-      
+    - name: Build and Test
+      run: |
+        dotnet restore
+        dotnet build --no-restore
+        dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+    
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-${{ matrix.os }}
+        name: test-results-linux
+        path: TestResults
+        retention-days: 30
+
+  windows-build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet Packages
+      run: nuget restore NYaul.sln
+
+    - name: Build Solution
+      run: msbuild NYaul.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    - name: Test
+      run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-windows
         path: TestResults
         retention-days: 30
