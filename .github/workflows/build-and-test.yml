@@ -42,6 +42,9 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Setup VSTest
+      uses: darenm/Setup-VSTest@v1
+
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1
 
@@ -49,10 +52,15 @@ jobs:
       run: nuget restore NYaul.sln
 
     - name: Build Solution
-      run: msbuild NYaul.sln /p:Configuration=Release /p:Platform="Any CPU"
+      run: |
+        msbuild NYaul.sln /p:Configuration=Release /p:Platform="Any CPU" /restore
+        msbuild NYaul.Tests\NYaul.Tests.csproj /p:Configuration=Release /p:Platform="Any CPU" /t:Build /p:TargetFramework=net481
 
-    - name: Test
-      run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+    - name: Test .NET Framework
+      run: vstest.console.exe NYaul.Tests\bin\Release\net481\NYaul.Tests.dll /Logger:trx\;LogFileName=TestResults\net481-test-results.trx
+
+    - name: Test .NET Core
+      run: dotnet test --no-build --configuration Release --framework net8.0 --logger "trx;LogFileName=TestResults/net8-test-results.trx" --results-directory TestResults
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
