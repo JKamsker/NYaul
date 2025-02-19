@@ -4,7 +4,7 @@
 //using System.Runtime.InteropServices;
 //using System.Text;
 
-//namespace Apro.AutoUpdater.Lib.IO.HardwareDetection.Windows;
+//namespace NYaul.IO.HardwareDetection.Windows;
 
 //// Resolves symlink paths to their final destination.
 //internal class FinalPathResolver

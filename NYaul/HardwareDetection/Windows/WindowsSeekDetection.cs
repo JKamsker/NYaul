@@ -1,4 +1,4 @@
-﻿//namespace Apro.AutoUpdater.Lib.IO.HardwareDetection.Windows;
+﻿//namespace NYaul.IO.HardwareDetection.Windows;
 
 //using Microsoft.Win32.SafeHandles;
 

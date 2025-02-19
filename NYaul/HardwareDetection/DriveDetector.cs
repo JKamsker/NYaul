@@ -1,20 +1,20 @@
-﻿//using Apro.AutoUpdater.Lib.IO.FileProvider;
-//using Apro.AutoUpdater.Lib.IO.HardwareDetection.Linux;
-//using Apro.AutoUpdater.Lib.IO.HardwareDetection.Windows;
+﻿//using NYaul.IO.FileProvider;
+//using NYaul.IO.HardwareDetection.Linux;
+//using NYaul.IO.HardwareDetection.Windows;
 
 //using NYaul.Internals;
 
-////using Apro.AutoUpdater.Lib.IO.FileProvider;
-////using Apro.AutoUpdater.Lib.IO.Paths;
+////using NYaul.IO.FileProvider;
+////using NYaul.IO.Paths;
 
 //using System;
 //using System.Collections.Generic;
 //using System.Runtime.CompilerServices;
 //using System.Text.RegularExpressions;
 
-//[assembly: InternalsVisibleTo("Apro.AutoUpdater.Tests")]
+//[assembly: InternalsVisibleTo("NYaul.Tests")]
 
-//namespace Apro.AutoUpdater.Lib.IO.HardwareDetection;
+//namespace NYaul.IO.HardwareDetection;
 
 //public class DriveDetector
 //{
