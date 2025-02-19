@@ -6,12 +6,26 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            framework: net8.0
+          - os: windows-latest
+            framework: all
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
     
     - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Setup .NET Framework (Windows)
+      if: matrix.os == 'windows-latest'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
@@ -24,13 +38,18 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+    - name: Test (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet test --no-build --verbosity normal --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+      
+    - name: Test (Windows)
+      if: matrix.os == 'windows-latest'
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
       
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results
-        path: "**/test-results.trx"
+        name: test-results-${{ matrix.os }}
+        path: TestResults
         retention-days: 30
