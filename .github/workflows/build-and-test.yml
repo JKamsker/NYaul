@@ -44,6 +44,7 @@ jobs:
         retention-days: 30
 
   windows-build:
+    if: false  # Disable this job for now
     runs-on: windows-latest
     permissions:
       contents: read
