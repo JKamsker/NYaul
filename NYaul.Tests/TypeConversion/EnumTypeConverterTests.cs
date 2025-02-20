@@ -77,4 +77,17 @@ public class EnumTypeConverterTests
         // Assert
         result.Should().BeFalse();
     }
+
+    [Theory]
+    [InlineData(123)]
+    [InlineData(45.67)]
+    [InlineData(true)]
+    public void ConvertFrom_NonStringType_ShouldThrowException(object input)
+    {
+        // Act
+        var action = () => _converter.ConvertFrom(input);
+
+        // Assert
+        action.Should().Throw<NotSupportedException>();
+    }
 }
