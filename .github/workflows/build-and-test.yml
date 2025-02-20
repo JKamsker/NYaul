@@ -26,7 +26,7 @@ jobs:
       run: |
         dotnet restore
         dotnet build --no-restore --configuration Release --verbosity normal
-        dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+        dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults --configuration Release
     
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
@@ -35,7 +35,7 @@ jobs:
         name: test-results-linux
         path: TestResults
         retention-days: 30
-        
+
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v4
       with:
