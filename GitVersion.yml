@@ -1,4 +1,5 @@
-mode: Mainline
+mode: ContinuousDeployment
+next-version: 0.0.3
 branches:
   master:
     regex: ^master$|^main$
