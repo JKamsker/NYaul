@@ -66,8 +66,20 @@ jobs:
         name: linux-build-output
         path: .
 
+    - name: List Build Output
+      run: |
+        echo "Build output contents:"
+        find . -name "*.dll" -type f
+
     - name: Test
-      run: dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+      run: |
+        TEST_DLL=$(find . -name "NYaul.Tests.dll" -path "*/Release/net8.0/*" -type f)
+        if [ -z "$TEST_DLL" ]; then
+          echo "Error: Could not find NYaul.Tests.dll in Release/net8.0"
+          exit 1
+        fi
+        echo "Found test dll at: $TEST_DLL"
+        dotnet test "$TEST_DLL" --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
     
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
@@ -161,7 +173,14 @@ jobs:
       run: vstest.console.exe NYaul.Tests\bin\Release\net481\NYaul.Tests.dll /Logger:"trx;LogFileName=TestResults/net481-test-results.trx"
 
     - name: Test .NET Core
-      run: dotnet test --no-build --configuration Release --framework net8.0 --logger "trx;LogFileName=TestResults/net8-test-results.trx" --results-directory TestResults
+      run: |
+        $testDll = Get-ChildItem -Path . -Filter NYaul.Tests.dll -Recurse | Where-Object { $_.FullName -like "*Release\net8.0*" } | Select-Object -First 1
+        if (-not $testDll) {
+            Write-Error "Could not find NYaul.Tests.dll in Release/net8.0"
+            exit 1
+        }
+        Write-Host "Found test dll at: $($testDll.FullName)"
+        dotnet test $testDll.FullName --no-build --configuration Release --framework net8.0 --logger "trx;LogFileName=TestResults/net8-test-results.trx" --results-directory TestResults
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
