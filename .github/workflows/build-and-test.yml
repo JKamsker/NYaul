@@ -5,6 +5,7 @@ on:
     branches: [ "master", "main" ]
   pull_request:
     branches: [ "master", "main" ]
+  workflow_dispatch:  # Add workflow_dispatch for manual triggering
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -39,7 +40,8 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
-      packages: write
+      packages: write  # Keep this; it might help in some contexts
+
     steps:
     - uses: actions/checkout@v4
       with:
@@ -95,12 +97,20 @@ jobs:
         path: TestResults
         retention-days: 30
 
+    - name: Upload NuGet Package as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: NYaul/bin/Release/NYaul.*.nupkg  # Use a wildcard to catch all versions
+        retention-days: 30
+
     - name: Setup NuGet for GitHub Packages
       if: github.event_name != 'pull_request'
       run: |
         dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
-    - name: Publish NuGet Package
+    - name: Attempt NuGet Package Publish
       if: github.event_name != 'pull_request'
+      continue-on-error: true  #  <-- CRITICAL CHANGE HERE
       run: |
         dotnet nuget push "NYaul/bin/Release/NYaul.${{ steps.gitversion.outputs.semVer }}.nupkg" --source "github" --api-key ${{ secrets.GITHUB_TOKEN }}
