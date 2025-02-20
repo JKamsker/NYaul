@@ -35,6 +35,12 @@ jobs:
         name: test-results-linux
         path: TestResults
         retention-days: 30
+    - name: Upload NuGet Package as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package-linux
+        path: NYaul/bin/Release/NYaul.*.nupkg
+        retention-days: 30
 
   windows-build:
     runs-on: windows-latest
@@ -102,7 +108,7 @@ jobs:
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package
+        name: nuget-package-windows
         path: NYaul/bin/Release/NYaul.*.nupkg  # Use a wildcard to catch all versions
         retention-days: 30
 
