@@ -1,15 +1,13 @@
 mode: ContinuousDelivery
 assembly-versioning-scheme: MajorMinorPatch
 next-version: 0.0.1
+increment: Patch
 commit-message-incrementing: Disabled
-tag-prefix: '[vV]?'
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
+tag-prefix: '[vV]'
 branches:
   master:
     regex: ^master$|^main$
-    tag: ''
     increment: Patch
+    prevent-increment-of-merged-branch-version: true
     is-release-branch: true
-legacy-semver-padding: 4
+    source-branches: []
