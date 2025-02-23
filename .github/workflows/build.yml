@@ -60,13 +60,14 @@ jobs:
 
     - name: Setup Local NuGet Source
       run: |
-        dotnet nuget add source $(pwd)/nuget-packages --name local-packages
+        dotnet nuget add source "$(pwd)/nuget-packages" --name local-packages
 
     - name: Replace Project Reference with NuGet Package
       run: |
-        cd NYaul.Tests
-        dotnet remove reference ../NYaul/NYaul.csproj
-        dotnet add package NYaul --version ${{ env.VERSION }} --source $(pwd)/../nuget-packages
+        # Remove project reference
+        dotnet remove NYaul.Tests/NYaul.Tests.csproj reference ../NYaul/NYaul.csproj
+        # Add package reference using absolute path
+        dotnet add NYaul.Tests/NYaul.Tests.csproj package NYaul --version ${{ env.VERSION }} --source "$(pwd)/nuget-packages"
 
     - name: Run Tests
       run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release
