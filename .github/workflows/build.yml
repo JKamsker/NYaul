@@ -45,9 +45,19 @@ jobs:
           NYaul/bin/Release/NYaul.*.snupkg
         retention-days: 30
 
-  nuget-test:
+  matrix-test:
     needs: linux-build
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            test-results: test-results-linux.trx
+            shell: bash
+          - os: windows-latest
+            test-results: test-results-windows.trx
+            shell: pwsh
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
     
@@ -62,47 +72,46 @@ jobs:
         name: nuget-package
         path: nuget-packages
 
-    - name: Debug Directory Structure
-      run: |
-        pwd
-        ls -la
-        ls -la nuget-packages
-
-    - name: Setup Local NuGet Source
-      run: |
-        NUGET_SOURCE="$PWD/nuget-packages"
-        echo "Using additional NuGet source: $NUGET_SOURCE"
-        # Add local source while keeping nuget.org
-        dotnet nuget add source "$NUGET_SOURCE" --name local-packages
-
-    - name: Replace Project Reference with NuGet Package
+    - name: Setup Local NuGet Source and Replace Reference (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
       env:
         VERSION: ${{ needs.linux-build.outputs.version }}
       run: |
-        WORKSPACE="$PWD"
-        TEST_PROJ="$WORKSPACE/NYaul.Tests/NYaul.Tests.csproj"
-        NUGET_SOURCE="$WORKSPACE/nuget-packages"
-
+        NUGET_SOURCE="$PWD/nuget-packages"
+        TEST_PROJ="$PWD/NYaul.Tests/NYaul.Tests.csproj"
+        
+        echo "Using NuGet source: $NUGET_SOURCE"
+        dotnet nuget add source "$NUGET_SOURCE" --name local-packages
+        
         dotnet restore "$TEST_PROJ"
-        
-        echo "Removing project reference..."
         dotnet remove "$TEST_PROJ" reference ../NYaul/NYaul.csproj
+        dotnet add "$TEST_PROJ" package NYaul --source "$NUGET_SOURCE"
+
+    - name: Setup Local NuGet Source and Replace Reference (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      env:
+        VERSION: ${{ needs.linux-build.outputs.version }}
+      run: |
+        $NugetSource = "$pwd\nuget-packages"
+        $TestProj = "$pwd\NYaul.Tests\NYaul.Tests.csproj"
         
-        echo "Adding NuGet package..."
-        echo "Project: $TEST_PROJ"
-        echo "Version: $VERSION"
-        echo "Source: $NUGET_SOURCE"
+        echo "Using NuGet source: $NugetSource"
+        dotnet nuget add source "$NugetSource" --name local-packages
         
-        dotnet add "$TEST_PROJ" package NYaul --source "$NUGET_SOURCE" 
+        dotnet restore $TestProj
+        dotnet remove $TestProj reference ..\NYaul\NYaul.csproj
+        dotnet add $TestProj package NYaul --source $NugetSource
 
     - name: Run Tests
-      run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release --logger "trx;LogFileName=test-results.trx"
+      run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release --logger "trx;LogFileName=${{ matrix.test-results }}"
 
     - name: Upload Test Results
-      if: always()  # Run this step even if tests fail
+      if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-results
-        path: NYaul.Tests/TestResults/test-results.trx
+        name: test-results-${{ matrix.os }}
+        path: NYaul.Tests/TestResults/${{ matrix.test-results }}
         retention-days: 30
 
