@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
+namespace NYaul.Reflection;
 
 public record GenericArgumentResult(Type RequestedType, Type DirectSubclass, Type[] GenericArguments);
 

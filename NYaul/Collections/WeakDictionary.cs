@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 
 namespace NYaul.Collections;
 
@@ -87,7 +89,7 @@ public class WeakDictionary<TKey, TValue>
         }
 
         // equality is based on the key and value
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is WeakEntry other)
             {
@@ -96,6 +98,7 @@ public class WeakDictionary<TKey, TValue>
             return false;
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             return Key.GetHashCode() ^ Value.GetHashCode();

@@ -1,4 +1,5 @@
-﻿using NYaul.IO.FileProvider;
+﻿using System;
+using NYaul.IO.FileProvider;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -76,9 +77,11 @@ public class VirtualFileProvider : IFileProvider
             Path = path;
             Content = content;
         }
-
+        
+        
         public VirtualFileProviderEntry(string path, string content)
         {
+            Content = Array.Empty<byte>();
             Path = path;
             StringContent = content;
         }

@@ -1,3 +1,5 @@
+using NYaul.Reflection;
+
 namespace NYaul.Tests;
 
 public class GenericTypeHelperTests

@@ -132,12 +132,15 @@ public class DirectoryCopyBuilder : IDirectoryFromBuilder, IDirectoryToBuilder, 
     private string _sourcePath;
     private string _destinationPath;
 
-    private List<Func<FileSystemInfo, bool>> _directoryFilters = new();
-    private List<Func<FileSystemInfo, bool>> _fileFilters = new();
+    private readonly List<Func<FileSystemInfo, bool>> _directoryFilters = new();
+    private readonly List<Func<FileSystemInfo, bool>> _fileFilters = new();
     private bool _deepCopy;
 
     private DirectoryCopyBuilder()
-    { }
+    {
+        _sourcePath = string.Empty;
+        _destinationPath = string.Empty;
+    }
 
     public static DirectoryCopyBuilder Copy => new DirectoryCopyBuilder();
 

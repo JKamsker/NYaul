@@ -53,23 +53,38 @@ namespace NYaul.Reflection
 
             // 1. Try to use CreateDefault method
             var createDefaultMethod = context.CreateDefaultMethod;
-            if (createDefaultMethod != null && type.IsAssignableFrom(createDefaultMethod.ReturnType))
+            if 
+            (
+                createDefaultMethod != null 
+                && type.IsAssignableFrom(createDefaultMethod.ReturnType)
+                && createDefaultMethod.Invoke(null, null) is T result
+            )
             {
-                return (T)createDefaultMethod.Invoke(null, null);
+                return result;
             }
 
             // 2. Try to use Default property
             var defaultProperty = context.DefaultProperty;
-            if (defaultProperty != null && type.IsAssignableFrom(defaultProperty.PropertyType))
+            if 
+            (
+                defaultProperty != null 
+                && type.IsAssignableFrom(defaultProperty.PropertyType)
+                && defaultProperty.GetValue(null) is T result2
+            )
             {
-                return (T)defaultProperty.GetValue(null);
+                return result2;
             }
 
             // 3. Try to use Default field
             var defaultField = context.DefaultField;
-            if (defaultField != null && type.IsAssignableFrom(defaultField.FieldType))
+            if
+            (
+                defaultField != null 
+                && type.IsAssignableFrom(defaultField.FieldType)
+                && defaultField.GetValue(null) is T result3
+            )
             {
-                return (T)defaultField.GetValue(null);
+                return result3;
             }
 
             // 4. Fallback to parameterless constructor or Activator.CreateInstance<T>()

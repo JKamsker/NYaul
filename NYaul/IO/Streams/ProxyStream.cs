@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NYaul.IO;
+namespace NYaul.IO.Streams;
 
 #if NET5_0_OR_GREATER
 public abstract class ProxyStream : Stream

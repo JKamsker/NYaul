@@ -1,35 +1,35 @@
 ﻿namespace NYaul.HardwareDetection.Linux;
-using NYaul.IO.FileProvider;
 
+using NYaul.IO.FileProvider;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 public class MountEntry
 {
-    public string DeviceName => Path.GetFileName(Device);
-    public string Device { get; set; }
-    public string MountPoint { get; set; }
-    public string FileSystem { get; set; }
-    public string Options { get; set; }
+    public string DeviceName => Device == null ? string.Empty : Path.GetFileName(Device);
+    public string? Device { get; set; }
+    public string? MountPoint { get; set; }
+    public string? FileSystem { get; set; }
+    public string? Options { get; set; }
 }
 
 public class MountParser
 {
-    private readonly IFileProvider fileProvider;
+    private readonly IFileProvider _fileProvider;
 
     public MountParser(IFileProvider? fileProvider = null)
     {
-        this.fileProvider = fileProvider ?? DefaultFileProvider.Instance;
+        _fileProvider = fileProvider ?? DefaultFileProvider.Instance;
     }
 
     public IEnumerable<MountEntry> ParseMounts()
     {
-        if (fileProvider.FileExists("/proc/mounts"))
+        if (_fileProvider.FileExists("/proc/mounts"))
         {
             return ReadMount("/proc/mounts");
         }
-        else if (fileProvider.FileExists("/etc/mtab"))
+        else if (_fileProvider.FileExists("/etc/mtab"))
         {
             return ReadMount("/etc/mtab");
         }
@@ -53,15 +53,14 @@ public class MountParser
 
     private IEnumerable<MountEntry> ReadMount(string mountsFile)
     {
-        if (!fileProvider.FileExists(mountsFile))
+        if (!_fileProvider.FileExists(mountsFile))
         {
             yield break;
         }
 
-        using Stream stream = fileProvider.OpenRead(mountsFile);
+        using Stream stream = _fileProvider.OpenRead(mountsFile);
         using StreamReader reader = new StreamReader(stream);
-        string line;
-        while ((line = reader.ReadLine()) != null)
+        while (reader.ReadLine() is { } line)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
