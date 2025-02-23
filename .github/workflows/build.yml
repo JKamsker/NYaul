@@ -41,3 +41,33 @@ jobs:
           NYaul/bin/Release/NYaul.*.snupkg
         retention-days: 30
 
+  nuget-test:
+    needs: linux-build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Download NuGet Package
+      uses: actions/download-artifact@v4
+      with:
+        name: nuget-package
+        path: nuget-packages
+
+    - name: Setup Local NuGet Source
+      run: |
+        dotnet nuget add source $(pwd)/nuget-packages --name local-packages
+
+    - name: Replace Project Reference with NuGet Package
+      run: |
+        cd NYaul.Tests
+        dotnet remove reference ../NYaul/NYaul.csproj
+        dotnet add package NYaul --version ${{ env.VERSION }} --source $(pwd)/../nuget-packages
+
+    - name: Run Tests
+      run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release
+
