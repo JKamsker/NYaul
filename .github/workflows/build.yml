@@ -91,20 +91,14 @@ jobs:
         echo "Version: $VERSION"
         echo "Source: $NUGET_SOURCE"
         
-        # First restore from nuget.org to get test dependencies
-        dotnet restore "$TEST_PROJ"
-        
-        # Then add our package using both sources
-        dotnet add "$TEST_PROJ" package NYaul \
-          --version "$VERSION" \
-          --source "$NUGET_SOURCE" \
-          --source https://api.nuget.org/v3/index.json
-        
-        # Final restore to ensure everything is in place
-        dotnet restore "$TEST_PROJ" \
-          --source "$NUGET_SOURCE" \
-          --source https://api.nuget.org/v3/index.json
+        dotnet add "$TEST_PROJ" package NYaul --source "$NUGET_SOURCE" 
 
     - name: Run Tests
       run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release
 
+# Dry run:
+# NYaul\bin\Release\NYaul.0.0.6.nupkg
+# NYaul\bin\Release\NYaul.0.0.6.snupkg
+
+# dotnet remove "NYaul.Tests/NYaul.Tests.csproj" reference "../NYaul/NYaul.csproj"
+# dotnet add "NYaul.Tests/NYaul.Tests.csproj" package NYaul --version 0.0.6 --source ".\NYaul\bin\Release"
