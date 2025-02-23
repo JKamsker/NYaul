@@ -22,12 +22,22 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Compute Version
+      id: version
+      run: |
+        VERSION="0.0.${{ github.run_number }}"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+
     - name: Build
       run: |
         VERSION="0.0.${{ github.run_number }}"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Build
+      run: |
         dotnet restore
-        dotnet build --configuration Release /p:Version="$VERSION" --no-restore
+        dotnet build --configuration Release /p:Version="${{ env.VERSION }}" /p:AssemblyVersion="${{ env.VERSION }}" /p:FileVersion="${{ env.VERSION }}" /p:InformationalVersion="${{ env.VERSION }}" --no-restore
+         
     
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v4
