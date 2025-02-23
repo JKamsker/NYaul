@@ -141,7 +141,6 @@ jobs:
 
         echo "Using NuGet source: $NUGET_SOURCE"
         dotnet nuget push "$NUGET_SOURCE/NYaul.*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "$NUGET_SOURCE/NYaul.*.snupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
         echo "Upload complete"
         echo "Version: ${{ needs.linux-build.outputs.version }}"
         echo "Build Number: ${{ github.run_number }}"
