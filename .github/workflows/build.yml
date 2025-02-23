@@ -71,14 +71,14 @@ jobs:
     - name: Setup Local NuGet Source
       run: |
         NUGET_SOURCE="$PWD/nuget-packages"
-        echo "Using NuGet source: $NUGET_SOURCE"
+        echo "Using additional NuGet source: $NUGET_SOURCE"
+        # Add local source while keeping nuget.org
         dotnet nuget add source "$NUGET_SOURCE" --name local-packages
 
     - name: Replace Project Reference with NuGet Package
       env:
         VERSION: ${{ needs.linux-build.outputs.version }}
       run: |
-        # Store full paths
         WORKSPACE="$PWD"
         TEST_PROJ="$WORKSPACE/NYaul.Tests/NYaul.Tests.csproj"
         NUGET_SOURCE="$WORKSPACE/nuget-packages"
@@ -91,9 +91,19 @@ jobs:
         echo "Version: $VERSION"
         echo "Source: $NUGET_SOURCE"
         
+        # First restore from nuget.org to get test dependencies
+        dotnet restore "$TEST_PROJ"
+        
+        # Then add our package using both sources
         dotnet add "$TEST_PROJ" package NYaul \
           --version "$VERSION" \
-          --source "$NUGET_SOURCE"
+          --source "$NUGET_SOURCE" \
+          --source https://api.nuget.org/v3/index.json
+        
+        # Final restore to ensure everything is in place
+        dotnet restore "$TEST_PROJ" \
+          --source "$NUGET_SOURCE" \
+          --source https://api.nuget.org/v3/index.json
 
     - name: Run Tests
       run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release
