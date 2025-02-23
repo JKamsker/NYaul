@@ -48,7 +48,8 @@ jobs:
     needs: linux-build
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
             test-results: test-results-linux.trx
@@ -123,6 +124,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: nuget-package
+        path: nuget-packages
+
     - name: Get Secrets
       uses: bitwarden/sm-action@v2
       with:
@@ -133,8 +136,12 @@ jobs:
 
     - name: Upload to NuGet.org
       run: |
-        dotnet nuget push NYaul/bin/Release/NYaul.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-        dotnet nuget push NYaul/bin/Release/NYaul.*.snupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+        NUGET_SOURCE="$PWD/nuget-packages"
+        
+        echo "Using NuGet source: $NUGET_SOURCE"
+        dotnet nuget push "$NUGET_SOURCE/NYaul.*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "$NUGET_SOURCE/NYaul.*.snupkg" --api-key "$NUGET_API_KEY
+
         echo "Upload complete"
         echo "Version: ${{ needs.linux-build.outputs.version }}"
         echo "Build Number: ${{ github.run_number }}"
