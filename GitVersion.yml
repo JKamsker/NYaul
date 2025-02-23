@@ -1,5 +1,6 @@
-mode: ContinuousDeployment
-next-version: 0.0.3
+mode: ContinuousDelivery
+assembly-versioning-scheme: MajorMinorPatch
+next-version: 0.0.1
 branches:
   master:
     regex: ^master$|^main$
@@ -8,4 +9,4 @@ branches:
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
     tracks-release-branches: false
-    is-release-branch: false
+    is-release-branch: true
