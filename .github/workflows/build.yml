@@ -82,6 +82,8 @@ jobs:
         WORKSPACE="$PWD"
         TEST_PROJ="$WORKSPACE/NYaul.Tests/NYaul.Tests.csproj"
         NUGET_SOURCE="$WORKSPACE/nuget-packages"
+
+        dotnet restore "$TEST_PROJ"
         
         echo "Removing project reference..."
         dotnet remove "$TEST_PROJ" reference ../NYaul/NYaul.csproj
