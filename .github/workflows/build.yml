@@ -17,8 +17,15 @@ jobs:
     outputs:
       version: ${{ steps.set-version.outputs.version }}
     steps:
+    - name: Get Secrets
+      uses: bitwarden/sm-action@v2
+      with:
+        access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+        base_url: https://vault.bitwarden.eu
+        secrets: |
+          265b2fb6-2cf0-4859-9bc8-b24c00ab4378 > nuget_api_key
+
     - uses: actions/checkout@v4
-    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -128,9 +135,10 @@ jobs:
       uses: bitwarden/sm-action@v2
       with:
         access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-        base_url: https://vault.bitwarden.com
+        base_url: https://vault.bitwarden.eu
         secrets: |
           265b2fb6-2cf0-4859-9bc8-b24c00ab4378 > nuget_api_key
+
     - name: Upload to NuGet.org
       run: |
         dotnet nuget push NYaul/bin/Release/NYaul.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
