@@ -14,6 +14,8 @@ env:
 jobs:
   linux-build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
     steps:
     - uses: actions/checkout@v4
     
@@ -23,9 +25,11 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Compute Version
+      id: set-version
       run: |
         VERSION="0.0.${{ github.run_number }}"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Build
       run: |
@@ -71,6 +75,8 @@ jobs:
         dotnet nuget add source "$NUGET_SOURCE" --name local-packages
 
     - name: Replace Project Reference with NuGet Package
+      env:
+        VERSION: ${{ needs.linux-build.outputs.version }}
       run: |
         # Store full paths
         WORKSPACE="$PWD"
