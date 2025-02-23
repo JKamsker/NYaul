@@ -48,15 +48,14 @@ jobs:
     needs: linux-build
     strategy:
       matrix:
-        # os: [ubuntu-latest, windows-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             test-results: test-results-linux.trx
             shell: bash
-          # - os: windows-latest
-          #   test-results: test-results-windows.trx
-          #   shell: pwsh
+          - os: windows-latest
+            test-results: test-results-windows.trx
+            shell: pwsh
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
