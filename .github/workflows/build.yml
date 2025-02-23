@@ -115,3 +115,28 @@ jobs:
         path: NYaul.Tests/TestResults/${{ matrix.test-results }}
         retention-days: 30
 
+#  Upload to NuGet.org using bitwarden secrets
+  NugetUpload:
+    needs: matrix-test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download NuGet Package
+      uses: actions/download-artifact@v4
+      with:
+        name: nuget-package
+    - name: Get Secrets
+      uses: bitwarden/sm-action@v2
+      with:
+        access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+        base_url: https://vault.bitwarden.com
+        secrets: |
+          265b2fb6-2cf0-4859-9bc8-b24c00ab4378 > nuget_api_key
+    - name: Upload to NuGet.org
+      run: |
+        dotnet nuget push NYaul/bin/Release/NYaul.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        dotnet nuget push NYaul/bin/Release/NYaul.*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        echo "Upload complete"
+        echo "Version: ${{ needs.linux-build.outputs.version }}"
+        echo "Build Number: ${{ github.run_number }}"
+    
+
