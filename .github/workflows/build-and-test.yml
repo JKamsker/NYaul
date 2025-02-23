@@ -37,7 +37,11 @@ jobs:
     - name: Build
       run: |
         dotnet restore
-        dotnet build --configuration Release /p:Version="0.0.${{ steps.gitversion.outputs.buildMetaData }}"
+        BUILD_NUMBER=${{ steps.gitversion.outputs.buildMetaData }}
+        if [ -z "$BUILD_NUMBER" ]; then
+          BUILD_NUMBER=1
+        fi
+        dotnet build --configuration Release /p:Version="0.0.$BUILD_NUMBER"
 
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v4

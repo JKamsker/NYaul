@@ -1,4 +1,4 @@
-mode: Mainline
+mode: ContinuousDelivery
 assembly-versioning-scheme: MajorMinorPatch
 next-version: 0.0.1
 branches:
@@ -6,3 +6,5 @@ branches:
     regex: ^master$|^main$
     increment: Patch
     is-release-branch: true
+legacy-semver-padding: 4
+commit-message-incrementing: Enabled
