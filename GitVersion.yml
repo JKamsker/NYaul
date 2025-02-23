@@ -1,13 +1,8 @@
-mode: ContinuousDelivery
+mode: Mainline
 assembly-versioning-scheme: MajorMinorPatch
-next-version: 0.0.0
+next-version: 0.0.1
 branches:
   master:
     regex: ^master$|^main$
-    tag: ''
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
-    track-merge-target: false
-    tracks-release-branches: false
     is-release-branch: true
-    tag-number-pattern: '[0-9]*$'

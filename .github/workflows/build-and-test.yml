@@ -37,8 +37,8 @@ jobs:
     - name: Build
       run: |
         dotnet restore
-        dotnet build --configuration Release /p:Version="${{ steps.gitversion.outputs.semVer }}" /p:AssemblyVersion="${{ steps.gitversion.outputs.assemblySemVer }}" /p:FileVersion="${{ steps.gitversion.outputs.assemblySemFileVer }}" /p:InformationalVersion="${{ steps.gitversion.outputs.informationalVersion }}" --no-restore
-    
+        dotnet build --configuration Release /p:Version="0.0.${{ steps.gitversion.outputs.buildMetaData }}"
+
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v4
       with:

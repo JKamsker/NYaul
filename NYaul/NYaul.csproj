@@ -22,6 +22,7 @@
 		<PackageProjectUrl>https://github.com/JKamsker/NYaul</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<Copyright>Jonas Kamsker © 2024</Copyright>
+		 <Version>0.0.$(BuildNumber)</Version>
 		<PackageVersion>$(Version)</PackageVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
