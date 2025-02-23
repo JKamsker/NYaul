@@ -23,12 +23,6 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Compute Version
-      id: version
-      run: |
-        VERSION="0.0.${{ github.run_number }}"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-    - name: Build
       run: |
         VERSION="0.0.${{ github.run_number }}"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
