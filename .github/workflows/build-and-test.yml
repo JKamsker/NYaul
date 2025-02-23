@@ -5,7 +5,7 @@ on:
     branches: [ "master", "main" ]
   pull_request:
     branches: [ "master", "main" ]
-  workflow_dispatch:  # Add workflow_dispatch for manual triggering
+  workflow_dispatch:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -16,47 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    - name: Build and Test
-      run: |
-        dotnet restore
-        dotnet build --no-restore --configuration Release --verbosity normal
-        dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults --configuration Release
-    
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results-linux
-        path: TestResults
-        retention-days: 30
-
-    - name: Upload NuGet Package as Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-package-linux
-        path: NYaul/bin/Release/NYaul.*.nupkg
-        retention-days: 30
-
-  windows-build:
-    if: false  # Disable this job for now
-    runs-on: windows-latest
-    permissions:
-      contents: read
-      # packages read and write are required for the publish step
-      packages: write
-
-
-    steps:
-    - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # Required for GitVersion
-
+    
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.10.2
       with:
@@ -67,60 +29,28 @@ jobs:
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.10.2
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    - name: Setup VSTest
-      uses: darenm/Setup-VSTest@v1
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1
-
-    - name: Restore NuGet Packages
-      run: nuget restore NYaul.sln
-
-    - name: Build Solution
+    - name: Build and Test
       run: |
-        msbuild NYaul.sln /p:Configuration=Release /p:Platform="Any CPU" /p:Version="${{ steps.gitversion.outputs.semVer }}" /p:AssemblyVersion="${{ steps.gitversion.outputs.assemblySemVer }}" /p:FileVersion="${{ steps.gitversion.outputs.assemblySemFileVer }}" /p:InformationalVersion="${{ steps.gitversion.outputs.informationalVersion }}" /restore
-        msbuild NYaul.Tests\NYaul.Tests.csproj /p:Configuration=Release /p:Platform="Any CPU" /t:Build /p:TargetFramework=net481
-
-    - name: Create TestResults Directory
-      run: mkdir TestResults -Force
-
-    - name: Test .NET Framework
-      run: |
-        vstest.console.exe NYaul.Tests\bin\Release\net481\NYaul.Tests.dll /Logger:"trx;LogFileName=TestResults/net481-test-results.trx"
-
-    - name: Test .NET Core
-      run: dotnet test --no-build --configuration Release --framework net8.0 --logger "trx;LogFileName=TestResults/net8-test-results.trx" --results-directory TestResults
-
+        dotnet restore
+        dotnet build --configuration Release /p:Version="${{ steps.gitversion.outputs.semVer }}" /p:AssemblyVersion="${{ steps.gitversion.outputs.assemblySemVer }}" /p:FileVersion="${{ steps.gitversion.outputs.assemblySemFileVer }}" /p:InformationalVersion="${{ steps.gitversion.outputs.informationalVersion }}" --no-restore
+        dotnet test --no-build --framework net8.0 --logger "trx;LogFileName=TestResults/test-results.trx" --results-directory TestResults
+    
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-windows
+        name: test-results
         path: TestResults
         retention-days: 30
 
-    - name: Upload NuGet Package as Artifact
+    - name: Upload NuGet Package
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package-windows
-        path: NYaul/bin/Release/NYaul.*.nupkg  # Use a wildcard to catch all versions
+        name: nuget-package
+        path: NYaul/bin/Release/NYaul.*.nupkg
         retention-days: 30
-
-    # - name: Setup NuGet for GitHub Packages
-    #   if: github.event_name != 'pull_request'
-    #   run: |
-    #     dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-
-    # - name: Attempt NuGet Package Publish
-    #   if: github.event_name != 'pull_request'
-    #   continue-on-error: true  #  <-- CRITICAL CHANGE HERE
-    #   run: |
-    #     dotnet nuget push "NYaul/bin/Release/NYaul.${{ steps.gitversion.outputs.semVer }}.nupkg" --source "github" --api-key ${{ secrets.GITHUB_TOKEN }}
