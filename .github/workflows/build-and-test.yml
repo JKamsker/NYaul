@@ -24,12 +24,14 @@ jobs:
 
     - name: Build
       run: |
+        VERSION="0.0.${{ github.run_number }}"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
         dotnet restore
-        dotnet build --configuration Release /p:Version="0.0.${{ github.run_number }}" --no-restore
+        dotnet build --configuration Release /p:Version="$VERSION" --no-restore
     
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package
+        name: nuget-package-v${{ env.VERSION }}
         path: NYaul/bin/Release/NYaul.*.nupkg
         retention-days: 30
