@@ -58,16 +58,36 @@ jobs:
         name: nuget-package
         path: nuget-packages
 
+    - name: Debug Directory Structure
+      run: |
+        pwd
+        ls -la
+        ls -la nuget-packages
+
     - name: Setup Local NuGet Source
       run: |
-        dotnet nuget add source "$(pwd)/nuget-packages" --name local-packages
+        NUGET_SOURCE="$PWD/nuget-packages"
+        echo "Using NuGet source: $NUGET_SOURCE"
+        dotnet nuget add source "$NUGET_SOURCE" --name local-packages
 
     - name: Replace Project Reference with NuGet Package
       run: |
-        # Remove project reference
-        dotnet remove NYaul.Tests/NYaul.Tests.csproj reference ../NYaul/NYaul.csproj
-        # Add package reference using absolute path
-        dotnet add NYaul.Tests/NYaul.Tests.csproj package NYaul --version ${{ env.VERSION }} --source "$(pwd)/nuget-packages"
+        # Store full paths
+        WORKSPACE="$PWD"
+        TEST_PROJ="$WORKSPACE/NYaul.Tests/NYaul.Tests.csproj"
+        NUGET_SOURCE="$WORKSPACE/nuget-packages"
+        
+        echo "Removing project reference..."
+        dotnet remove "$TEST_PROJ" reference ../NYaul/NYaul.csproj
+        
+        echo "Adding NuGet package..."
+        echo "Project: $TEST_PROJ"
+        echo "Version: $VERSION"
+        echo "Source: $NUGET_SOURCE"
+        
+        dotnet add "$TEST_PROJ" package NYaul \
+          --version "$VERSION" \
+          --source "$NUGET_SOURCE"
 
     - name: Run Tests
       run: dotnet test NYaul.Tests/NYaul.Tests.csproj --configuration Release
