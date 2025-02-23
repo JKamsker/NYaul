@@ -32,10 +32,12 @@ jobs:
         dotnet restore
         dotnet build --configuration Release /p:Version="${{ env.VERSION }}" /p:AssemblyVersion="${{ env.VERSION }}" /p:FileVersion="${{ env.VERSION }}" /p:InformationalVersion="${{ env.VERSION }}" --no-restore
          
-    
     - name: Upload NuGet Package
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package-v${{ env.VERSION }}
-        path: NYaul/bin/Release/NYaul.*.nupkg
+        name: nuget-package
+        path: |
+          NYaul/bin/Release/NYaul.*.nupkg
+          NYaul/bin/Release/NYaul.*.snupkg
         retention-days: 30
+
