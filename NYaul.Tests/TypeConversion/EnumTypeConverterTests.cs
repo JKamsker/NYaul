@@ -22,6 +22,8 @@ public class EnumTypeConverterTests
     public EnumTypeConverterTests()
     {
         _converter = (EnumTypeConverter<TestEnum>)TypeDescriptor.GetConverter(typeof(TestEnum));
+        
+        var a  = TypeDescriptor.GetConverter(typeof(TestEnum)).TryConvert("two", out TestEnum converted);
     }
 
     [Theory]

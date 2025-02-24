@@ -29,12 +29,16 @@ public class EnumTypeConverter<TEnum> : TypeConverter
     private Dictionary<string, TEnum>? _enumValues;
 
     private Lazy<Dictionary<string, TEnum>> _lazyEnumValues = new(LazyInit);
+    
+    public static EnumTypeConverter<TEnum> Instance { get; } = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EnumTypeConverter{TEnum}"/> class.
     /// Uses lazy initialization for enum value mapping.
     /// </summary>
-    public EnumTypeConverter() { }
+    public EnumTypeConverter()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EnumTypeConverter{TEnum}"/> class with predefined enum values.
@@ -83,16 +87,16 @@ public class EnumTypeConverter<TEnum> : TypeConverter
 
         return base.ConvertFrom(context, culture, value);
     }
-    
+
     public bool TryConvert(string stringValue, out TEnum? result)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if(stringValue == null)
+        if (stringValue == null)
         {
             result = null;
             return false;
         }
-        
+
         if (_enumValues != null && _enumValues.TryGetValue(stringValue, out var res))
         {
             result = res;
@@ -167,5 +171,44 @@ public class EnumAliasAttribute : Attribute
     public EnumAliasAttribute(params string[] aliases)
     {
         Aliases = aliases;
+    }
+}
+
+/// <summary>
+/// Extension methods for <see cref="TypeConverter"/> and <see cref="EnumTypeConverter{TEnum}"/>.
+/// </summary>
+public static class EnumExtensions
+{
+    /// <summary>
+    /// Tries to convert the specified string value to an enum value using the specified type converter.
+    /// </summary>
+    public static bool TryConvert<TEnum>(this TypeConverter converter, string stringValue, out TEnum result)
+        where TEnum : struct, Enum
+    {
+        if (converter is EnumTypeConverter<TEnum> enumConverter && enumConverter.TryConvert(stringValue, out TEnum? tResult))
+        {
+            result = tResult ?? default;
+            return true;
+        }
+
+        try
+        {
+            if(converter.CanConvertFrom(typeof(string)))
+            {
+                var value = converter.ConvertFromInvariantString(stringValue);
+                if (value is TEnum enumValue)
+                {
+                    result = enumValue;
+                    return true;
+                }
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+
+        result = default;
+        return false;
     }
 }
