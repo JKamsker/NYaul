@@ -28,6 +28,16 @@ public class WaitTimeGenerator
         ReturnNullOnMaxRetries = returnNullOnMaxRetries;
     }
 
+    /// <summary>
+    /// Calculates the wait time for a specific retry attempt using exponential backoff.
+    /// </summary>
+    /// <param name="retryCount">The current retry attempt number (0-based index).</param>
+    /// <param name="maxRetryOverride">Optional override for the maximum number of retries. If provided, this value will be used instead of the instance's MaxRetries value.</param>
+    /// <returns>A TimeSpan representing the calculated wait time, or null if ReturnNullOnMaxRetries is true and the retry count exceeds the maximum retries.</returns>
+    /// <remarks>
+    /// The wait time is calculated using an exponential backoff strategy, where each subsequent retry wait time increases exponentially,
+    /// but is capped at the specified MaxWaitTime. The growth rate is calculated to reach MaxWaitTime after the specified number of retries.
+    /// </remarks>
     public TimeSpan? GetWaitTime(int retryCount, int? maxRetryOverride = null)
     {
         var maxRetries = maxRetryOverride ?? MaxRetries;
@@ -42,6 +52,14 @@ public class WaitTimeGenerator
         return TimeSpan.FromSeconds(waitTimeInSeconds);
     }
 
+    /// <summary>
+    /// Generates a sequence of wait times for all possible retry attempts.
+    /// </summary>
+    /// <returns>An enumerable sequence of TimeSpan values representing the wait time for each retry attempt. The sequence ends when ReturnNullOnMaxRetries is true and MaxRetries is exceeded.</returns>
+    /// <remarks>
+    /// This method provides a convenient way to preview all wait times that would be used in a retry sequence.
+    /// The sequence will continue indefinitely if ReturnNullOnMaxRetries is false.
+    /// </remarks>
     public IEnumerable<TimeSpan?> GetWaitTimes()
     {
         for (int i = 0; ; i++)
@@ -56,9 +74,20 @@ public class WaitTimeGenerator
         }
     }
 
+    /// <summary>
+    /// Gets a builder instance for creating a new WaitTimeGenerator with a fluent API.
+    /// </summary>
+    /// <returns>A new instance of WaitTimeGeneratorBuilder.</returns>
     public static WaitTimeGeneratorBuilder Create => new WaitTimeGeneratorBuilder();
 }
 
+/// <summary>
+/// A builder class for creating instances of WaitTimeGenerator with a fluent API.
+/// </summary>
+/// <remarks>
+/// This builder provides a convenient way to configure and create WaitTimeGenerator instances
+/// with mandatory parameters and optional settings.
+/// </remarks>
 public class WaitTimeGeneratorBuilder
 {
     private int? _maxRetries;
@@ -66,8 +95,17 @@ public class WaitTimeGeneratorBuilder
     private TimeSpan? _maxWaitTime;
     private bool? _returnNullOnMaxRetries;
 
+    /// <summary>
+    /// Gets a new instance of the WaitTimeGeneratorBuilder.
+    /// </summary>
+    /// <returns>A new instance of WaitTimeGeneratorBuilder.</returns>
     public static WaitTimeGeneratorBuilder Create => new WaitTimeGeneratorBuilder();
 
+    /// <summary>
+    /// Sets the maximum number of retry attempts and enables returning null after max retries.
+    /// </summary>
+    /// <param name="maxRetries">The maximum number of retry attempts.</param>
+    /// <returns>The current builder instance for method chaining.</returns>
     public WaitTimeGeneratorBuilder WithMaxRetries(int maxRetries)
     {
         _maxRetries = maxRetries;
@@ -81,18 +119,33 @@ public class WaitTimeGeneratorBuilder
     public WaitTimeGeneratorBuilder WithMinWaitTime(TimeSpan baseTime)
         => WithBaseTime(baseTime);
 
+    /// <summary>
+    /// Sets the base wait time for the first retry attempt.
+    /// </summary>
+    /// <param name="baseTime">The initial wait time before exponential increase.</param>
+    /// <returns>The current builder instance for method chaining.</returns>
     public WaitTimeGeneratorBuilder WithBaseTime(TimeSpan baseTime)
     {
         _baseTime = baseTime;
         return this;
     }
 
+    /// <summary>
+    /// Sets the maximum wait time between retries.
+    /// </summary>
+    /// <param name="maxWaitTime">The maximum allowed wait time between retries.</param>
+    /// <returns>The current builder instance for method chaining.</returns>
     public WaitTimeGeneratorBuilder WithMaxWaitTime(TimeSpan maxWaitTime)
     {
         _maxWaitTime = maxWaitTime;
         return this;
     }
 
+    /// <summary>
+    /// Sets the maximum number of retries and configures the generator to continue using max wait time after reaching the limit.
+    /// </summary>
+    /// <param name="maxRetries">The number of retries after which the maximum wait time will be used.</param>
+    /// <returns>The current builder instance for method chaining.</returns>
     public WaitTimeGeneratorBuilder MaxWaitTimeAfter(int maxRetries)
     {
         _maxRetries = maxRetries;
@@ -100,6 +153,11 @@ public class WaitTimeGeneratorBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds and returns a new WaitTimeGenerator instance with the configured settings.
+    /// </summary>
+    /// <returns>A new WaitTimeGenerator instance.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when required parameters (MaxRetries, BaseTime, or MaxWaitTime) are not set.</exception>
     public WaitTimeGenerator Build()
     {
         if (_maxRetries == null)

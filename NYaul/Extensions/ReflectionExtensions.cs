@@ -1,10 +1,13 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NYaul.Reflection;
 
 namespace System.Reflection;
 
+/// <summary>
+/// Provides extension methods for type reflection tasks.
+/// </summary>
 public static class ReflectionExtensions
 {
     /// <inheritdoc cref="GenericTypeHelper.GetGenericArgumentsOfTypeDefinition(Type, Type)"/>

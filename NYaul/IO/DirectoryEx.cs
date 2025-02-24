@@ -1,10 +1,13 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace NYaul.IO;
 
+/// <summary>
+/// Provides extended directory-related utility methods and a fluent copy API.
+/// </summary>
 public static class DirectoryEx
 {
     public static IEnumerable<DirectoryInfo> TraverseCurrentParents()
@@ -81,6 +84,9 @@ public static class DirectoryEx
     public static IDirectoryFromBuilder Copy => DirectoryCopyBuilder.Copy;
 }
 
+/// <summary>
+/// Defines methods for specifying the source directory in a fluent copy builder sequence.
+/// </summary>
 public interface IDirectoryFromBuilder
 {
     IDirectoryToBuilder From(string sourcePath);
@@ -92,6 +98,9 @@ public interface IDirectoryFromBuilder
     //}
 }
 
+/// <summary>
+/// Defines methods for specifying the destination directory in a fluent copy builder sequence.
+/// </summary>
 public interface IDirectoryToBuilder
 {
     IDirectoryCopyBuilder To(string destinationPath);
@@ -103,6 +112,9 @@ public interface IDirectoryToBuilder
     //}
 }
 
+/// <summary>
+/// Provides methods for configuring directory copy operations and executing them.
+/// </summary>
 public interface IDirectoryCopyBuilder
 {
     IDirectoryCopyBuilder WithFileFilter(Func<FileInfo, bool> fileFilter);
@@ -127,6 +139,10 @@ public interface IDirectoryCopyBuilder
     void Copy();// => Invoke();
 }
 
+    /// <summary>
+    /// Provides a fluent interface for configuring and executing directory copy operations,
+    /// including filtering files and directories and optionally performing a deep copy.
+    /// </summary>
 public class DirectoryCopyBuilder : IDirectoryFromBuilder, IDirectoryToBuilder, IDirectoryCopyBuilder
 {
     private string _sourcePath;
