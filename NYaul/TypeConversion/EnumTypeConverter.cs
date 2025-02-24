@@ -76,22 +76,43 @@ public class EnumTypeConverter<TEnum> : TypeConverter
 
     private object? ConvertFromString(ITypeDescriptorContext? context, CultureInfo? culture, object value, string str)
     {
-        if (_enumValues != null && _enumValues.TryGetValue(str, out var result))
-        {
-            return result;
-        }
-
-        if (Enum.TryParse<TEnum>(str, true, out result))
-        {
-            return result;
-        }
-
-        if (_lazyEnumValues.Value.TryGetValue(str, out result))
+        if (TryConvert(str, out var result))
         {
             return result;
         }
 
         return base.ConvertFrom(context, culture, value);
+    }
+    
+    public bool TryConvert(string stringValue, out TEnum? result)
+    {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if(stringValue == null)
+        {
+            result = null;
+            return false;
+        }
+        
+        if (_enumValues != null && _enumValues.TryGetValue(stringValue, out var res))
+        {
+            result = res;
+            return true;
+        }
+
+        if (Enum.TryParse<TEnum>(stringValue, true, out res))
+        {
+            result = res;
+            return true;
+        }
+
+        if (_lazyEnumValues.Value.TryGetValue(stringValue, out res))
+        {
+            result = res;
+            return true;
+        }
+
+        result = null;
+        return false;
     }
 
     /// <summary>
