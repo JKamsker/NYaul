@@ -12,6 +12,30 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
+  repomix:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run Repomix
+      env:
+        CI: true
+        NPM_CONFIG_YES: true
+      run: |
+        npx --yes repomix
+        
+    - name: Upload Repomix Output
+      uses: actions/upload-artifact@v4
+      with:
+        name: repomix-output
+        path: repomix-output.txt
+        retention-days: 30
+
   linux-build:
     runs-on: ubuntu-latest
     outputs:
